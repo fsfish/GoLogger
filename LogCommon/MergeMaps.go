@@ -12,6 +12,9 @@ func MergeMap(param ...map[string]interface{}) map[string]interface{} {
 	n := make(map[string]interface{}, pCount)
 	for i := pCount - 1; i >= 0; i-- {
 		p := param[i]
+		if p == nil {
+			continue
+		}
 		for k, v := range p {
 			if _, ok := n[k]; !ok {
 				n[k] = v

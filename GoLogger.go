@@ -2,6 +2,7 @@ package loghelper
 
 import (
 	"encoding/json"
+	"strconv"
 	"time"
 
 	consolehelper "github.com/yingying0708/GoLogger/ConsoleLogPrint"
@@ -51,14 +52,16 @@ func GetGoLogHelper(app_name, log_path string) *GoLogHelper {
 	}
 }
 
-//设置writer
+//设置writer，返回分割日志实例
 func getWriter(log *service.LogHelper) *rotatelogs.RotateLogs {
 	logPath := log.LogPath + log.AppName + "_p1_" + log.LogLevel + ".log"
+	//按天：D生成
 	writer, _ := rotatelogs.New(
 		logPath+".%Y%m%d.log",
 		rotatelogs.WithRotationCount(uint(log.BackupCount)),
 		rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
 	)
+	//按小时：H生成
 	if log.When == "H" {
 		writer, _ = rotatelogs.New(
 			logPath+".%Y%m%d%H.log",
@@ -66,6 +69,7 @@ func getWriter(log *service.LogHelper) *rotatelogs.RotateLogs {
 			rotatelogs.WithRotationTime(time.Duration(60)*time.Minute),
 		)
 	}
+	//按分钟：M生成
 	if log.When == "M" {
 		writer, _ = rotatelogs.New(
 			logPath+".%Y%m%d%H%M.log",
@@ -160,9 +164,10 @@ func (log *GoLogHelper) Error(param ...interface{}) {
 	}
 }
 
-//内部流水日志
+//内部流水日志msg参数应为结构体
 func (log *GoLogHelper) Internal_log(param ...interface{}) {
 	msg, extra := getParams(param...)
+	//msg不为nil ， 自定义的为nil
 	if msg != nil && extra == nil {
 		extra = ConvertIToM(msg)
 	}
@@ -340,24 +345,37 @@ func (log *GoLogHelper) printInfoLog(logModel *service.LogHelper, msg interface{
 //拆分参数(第一个参数默认是msg，后面的参数都是附加参数)
 func getParams(param ...interface{}) (interface{}, map[string]interface{}) {
 	if len(param) > 0 {
+		// msg参数
 		msg := getParamMsg(param[0])
 		//只有一个参数
 		if len(param) == 1 {
 			return msg, nil
 		}
-		//循环后面的参数
+		//循环后面的参数(msg后的额外参数)
 		var extraList []map[string]interface{}
+		//不可转换的参数排序使用
+		orderNumber := 1
 		for i := 1; i < len(param); i++ {
 			item := ConvertIToM(param[i])
 			if item != nil {
 				extraList = append(extraList, item)
+			} else {
+				//不可以转换的参数处理
+				extraListUnStructItem := make(map[string]interface{}, 1)
+				key := "extraParam" + strconv.Itoa(orderNumber)
+				extraListUnStructItem[key] = param[i]
+				//将不可转换的参数存到集合中
+				extraList = append(extraList, extraListUnStructItem)
+				//序号加1处理
+				orderNumber = orderNumber + 1
 			}
 		}
-		//多个集合整合
+		//多个集合整合(将额外参数整合到一起)
 		var extra map[string]interface{}
 		if len(extraList) > 0 {
 			extra = common.MergeMap(extraList...)
 		}
+		//返回msg参数和额外参数
 		return msg, extra
 	}
 	return nil, nil
@@ -423,6 +441,7 @@ func validateRequireItem(fields map[string]interface{}) (isFlag bool) {
 
 //获取参数Msg
 func getParamMsg(msg interface{}) interface{} {
+	//接收msg参数，调用ConvertIToM函数，如果返回的是nil，说明不可以转换，使用传入的msg
 	msgResult := ConvertIToM(msg)
 	if msgResult == nil {
 		return msg
@@ -432,6 +451,7 @@ func getParamMsg(msg interface{}) interface{} {
 
 //将interface{}转为map[string]interface{}
 func ConvertIToM(msg interface{}) map[string]interface{} {
+	//如果不可以转换返回nil，不处理异常，转换可以成功，返回转换后的内容
 	var mapResult map[string]interface{}
 	err := mapstructure.Decode(msg, &mapResult)
 	if err != nil {
@@ -439,3 +459,4 @@ func ConvertIToM(msg interface{}) map[string]interface{} {
 	}
 	return mapResult
 }
+

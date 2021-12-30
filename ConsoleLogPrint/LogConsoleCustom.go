@@ -10,7 +10,7 @@ import (
 
 func GetPrintLogConsoleCustom(appname, level string, extra map[string]interface{}) map[string]interface{} {
 	fields := make(map[string]interface{})
-	pc, file, line, _ := runtime.Caller(2)
+	pc, file, line, _ := runtime.Caller(3)
 	f := runtime.FuncForPC(pc)
 	hostname, err := os.Hostname()
 	if err != nil {
