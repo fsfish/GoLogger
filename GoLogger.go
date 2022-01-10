@@ -8,6 +8,7 @@ import (
 	consolehelper "github.com/yingying0708/GoLogger/ConsoleLogPrint"
 	filehelper "github.com/yingying0708/GoLogger/FileLogPrint"
 	common "github.com/yingying0708/GoLogger/LogCommon"
+	model "github.com/yingying0708/GoLogger/LogModel"
 	service "github.com/yingying0708/GoLogger/LogService"
 
 	"strings"
@@ -167,41 +168,62 @@ func (log *GoLogHelper) Error(param ...interface{}) {
 //内部流水日志msg参数应为结构体
 func (log *GoLogHelper) Internal_log(param ...interface{}) {
 	msg, extra := getParams(param...)
-	//msg不为nil ， 自定义的为nil
-	if msg != nil && extra == nil {
-		extra = ConvertIToM(msg)
-	}
-	if msg != nil && extra != nil {
-		extra = common.MergeMap(ConvertIToM(msg), extra)
-	}
-	if extra != nil {
-		if validateRequireItem(extra) {
-			log.printInfoLog(log.infoLog, "", extra)
+	//msg为流水日志结构体
+	msgS := ConvertMToS(msg)
+	if msgS == nil {
+		log.printInfoLog(log.infoLog, "流水日志中第一个参数必须为流水日志的结构体，请重新填写", nil)
+	} else {
+		//验证必填项
+		if isValidate(msgS) {
+			if msg != nil && extra == nil {
+				extra = ConvertIToM(msg)
+			}
+			if msg != nil && extra != nil {
+				extra = common.MergeMap(ConvertIToM(msg), extra)
+			}
+			if extra != nil {
+				if validateRequireItem(extra) {
+					log.printInfoLog(log.infoLog, extra["msg"], extra)
+				} else {
+					log.printInfoLog(log.infoLog, "流水日志中必填项没有传入完全，请核查必填项", nil)
+				}
+			} else {
+				log.printInfoLog(log.infoLog, msg, nil)
+			}
 		} else {
 			log.printInfoLog(log.infoLog, "流水日志中必填项没有传入完全，请核查必填项", nil)
 		}
-	} else {
-		log.printInfoLog(log.infoLog, msg, nil)
 	}
 }
 
 //外部流水日志
 func (log *GoLogHelper) External_log(param ...interface{}) {
 	msg, extra := getParams(param...)
-	if msg != nil && extra == nil {
-		extra = ConvertIToM(msg)
-	}
-	if msg != nil && extra != nil {
-		extra = common.MergeMap(ConvertIToM(msg), extra)
-	}
-	if extra != nil {
-		if validateRequireItem(extra) {
-			log.printInfoLog(log.infoLog, "", extra)
+	//msg为流水日志结构体
+	msgS := ConvertMToS(msg)
+	if msgS == nil {
+		log.printInfoLog(log.infoLog, "流水日志中第一个参数必须为流水日志的结构体，请重新填写", nil)
+	} else {
+		//验证必填项
+		if isValidate(msgS) {
+			if msg != nil && extra == nil {
+				extra = ConvertIToM(msg)
+			}
+			if msg != nil && extra != nil {
+				extra = common.MergeMap(ConvertIToM(msg), extra)
+			}
+			if extra != nil {
+				if validateRequireItem(extra) {
+					log.printInfoLog(log.infoLog, extra["msg"], extra)
+				} else {
+					log.printInfoLog(log.infoLog, "流水日志中必填项没有传入完全，请核查必填项", nil)
+				}
+			} else {
+				log.printInfoLog(log.infoLog, msg, nil)
+			}
 		} else {
 			log.printInfoLog(log.infoLog, "流水日志中必填项没有传入完全，请核查必填项", nil)
 		}
-	} else {
-		log.printInfoLog(log.infoLog, msg, nil)
 	}
 }
 
@@ -435,6 +457,10 @@ func validateRequireItem(fields map[string]interface{}) (isFlag bool) {
 		isFlag = false
 		return
 	}
+	if _, ok := fields["msg"]; !ok {
+		isFlag = false
+		return
+	}
 	isFlag = true
 	return
 }
@@ -460,3 +486,73 @@ func ConvertIToM(msg interface{}) map[string]interface{} {
 	return mapResult
 }
 
+//将map[string]interface{}转为结构体
+func ConvertMToS(field interface{}) *model.InfoLogFile {
+	var mapResult *model.InfoLogFile
+	err := mapstructure.Decode(field, &mapResult)
+	if err != nil {
+		return nil
+	}
+	return mapResult
+}
+
+//校验必填内容是否都填
+func isValidate(entity *model.InfoLogFile) (isFlag bool) {
+	if entity == nil {
+		return isFlag
+	}
+	if len(entity.Transaction_id) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Address) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Fcode) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Tcode) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Method_code) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Http_method) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Request_time) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Request_headers) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Request_payload) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Response_payload) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Response_time) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Total_time) < 1 {
+		isFlag = false
+		return
+	}
+	if len(entity.Msg) < 1 {
+		isFlag = false
+		return
+	}
+	isFlag = true
+	return isFlag
+}

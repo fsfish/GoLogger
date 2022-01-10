@@ -1,6 +1,5 @@
 package loghelper
 
-
 type InfoLogFile struct {
 	Dialog_type      string `mapstructure:"dialog_type"`      //in or out
 	Request_time     string `mapstructure:"request_time"`     //请求时间
@@ -24,4 +23,5 @@ type InfoLogFile struct {
 	TraceId          string `mapstructure:"traceId"`
 	Key_name         string `mapstructure:"key_name"`
 	Log_type         string `mapstructure:"log_type"`
+	Msg              string `mapstructure:"msg"`
 }
