@@ -17,7 +17,7 @@ func GetPrintLogFile(appname, level string, msg interface{}) interface{} {
 	}
 	module := strings.Split(f.Name(), ".")[0]
 	funcName := strings.Split(f.Name(), ".")[1]
-	log_time := time.Now().Format("2006-01-02 15:04:05")
+	log_time := time.Now().Format("2006-01-02 15:04:05.000")
 
 	entity := model.LogFile{
 		Logger:   file,
