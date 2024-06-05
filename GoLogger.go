@@ -25,10 +25,10 @@ var logsConsole = logrus.New()
 func init() {
 	//设置日志格式为json
 	logs.SetFormatter(&logrus.JSONFormatter{
-		TimestampFormat: "2006-01-02 15:03:04",
+		TimestampFormat: "2006-01-02 15:04:05.000",
 	})
 	logsConsole.SetFormatter(&logrus.JSONFormatter{
-		TimestampFormat: "2006-01-02 15:03:04",
+		TimestampFormat: "2006-01-02 15:04:05.000",
 	})
 }
 
