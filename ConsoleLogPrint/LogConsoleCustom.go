@@ -19,7 +19,7 @@ func GetPrintLogConsoleCustom(appname, level string, extra map[string]interface{
 	}
 	module := strings.Split(f.Name(), ".")[0]
 	funcName := strings.Split(f.Name(), ".")[1]
-	log_time := time.Now().Format("2006-01-02 15:04:05")
+	log_time := time.Now().Format("2006-01-02 15:04:05.000")
 	fields["logger"] = file
 	fields["lineno"] = line
 	fields["app_name"] = appname
