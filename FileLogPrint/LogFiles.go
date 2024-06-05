@@ -1,7 +1,7 @@
 package loghelper
 
 import (
-	model "github.com/yingying0708/GoLogger/LogModel"
+	model "github.com/fsfish/GoLogger/LogModel"
 	"os"
 	"runtime"
 	"strings"

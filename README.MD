@@ -2,7 +2,7 @@
 此项目是一个开源的golang的日志功能项目，go的版本是1.17，此项目建议在go版本是1.14及以上版本中使用
 
 ## 获取
-go get github.com/yingying0708/GoLogger
+go get github.com/fsfish/GoLogger
 
 ## 使用
 ```
@@ -84,8 +84,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	gologger "github.com/yingying0708/GoLogger"
-	gologgerModel "github.com/yingying0708/GoLogger/LogModel"
+	gologger "github.com/fsfish/GoLogger"
+	gologgerModel "github.com/fsfish/GoLogger/LogModel"
 )
 
 var log *gologger.GoLogHelper

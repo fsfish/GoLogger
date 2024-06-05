@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"time"
 
-	consolehelper "github.com/yingying0708/GoLogger/ConsoleLogPrint"
-	filehelper "github.com/yingying0708/GoLogger/FileLogPrint"
-	common "github.com/yingying0708/GoLogger/LogCommon"
-	model "github.com/yingying0708/GoLogger/LogModel"
-	service "github.com/yingying0708/GoLogger/LogService"
+	consolehelper "github.com/fsfish/GoLogger/ConsoleLogPrint"
+	filehelper "github.com/fsfish/GoLogger/FileLogPrint"
+	common "github.com/fsfish/GoLogger/LogCommon"
+	model "github.com/fsfish/GoLogger/LogModel"
+	service "github.com/fsfish/GoLogger/LogService"
 
 	"strings"
 
@@ -21,7 +21,7 @@ import (
 var logs = logrus.New()
 var logsConsole = logrus.New()
 
-//初始化
+// 初始化
 func init() {
 	//设置日志格式为json
 	logs.SetFormatter(&logrus.JSONFormatter{
@@ -53,7 +53,7 @@ func GetGoLogHelper(app_name, log_path string) *GoLogHelper {
 	}
 }
 
-//设置writer，返回分割日志实例
+// 设置writer，返回分割日志实例
 func getWriter(log *service.LogHelper) *rotatelogs.RotateLogs {
 	logPath := log.LogPath + log.AppName + "_p1_" + log.LogLevel + ".log"
 	//按天：D生成
@@ -81,7 +81,7 @@ func getWriter(log *service.LogHelper) *rotatelogs.RotateLogs {
 	return writer
 }
 
-//设置日志级别（error,debug,info,trace,warn 默认是error）
+// 设置日志级别（error,debug,info,trace,warn 默认是error）
 func (log *GoLogHelper) SetLogLevel(level string) *GoLogHelper {
 	levelstr := "error"
 	if level != "" {
@@ -91,7 +91,7 @@ func (log *GoLogHelper) SetLogLevel(level string) *GoLogHelper {
 	return log
 }
 
-//设置是否控制台打印默认是false
+// 设置是否控制台打印默认是false
 func (log *GoLogHelper) SetConsolePrint(isPrint bool) *GoLogHelper {
 	log.errorLog.SetConsolePrint(isPrint)
 	log.debugLog.SetConsolePrint(isPrint)
@@ -101,7 +101,7 @@ func (log *GoLogHelper) SetConsolePrint(isPrint bool) *GoLogHelper {
 	return log
 }
 
-//设置多少个文件后进行回滚操作默认是15
+// 设置多少个文件后进行回滚操作默认是15
 func (log *GoLogHelper) SetBackupCount(backupCount int) *GoLogHelper {
 	if backupCount > 0 {
 		log.errorLog.SetBackupCount(backupCount)
@@ -113,7 +113,7 @@ func (log *GoLogHelper) SetBackupCount(backupCount int) *GoLogHelper {
 	return log
 }
 
-//设置when(D:天，H：小时，M：分钟，默认是D)
+// 设置when(D:天，H：小时，M：分钟，默认是D)
 func (log *GoLogHelper) SetWhen(when string) *GoLogHelper {
 	if when != "" {
 		log.errorLog.SetWhen(when)
@@ -125,7 +125,7 @@ func (log *GoLogHelper) SetWhen(when string) *GoLogHelper {
 	return log
 }
 
-//Trace
+// Trace
 func (log *GoLogHelper) Trace(param ...interface{}) {
 	if common.GetLogLevel(log.LogLevel) <= common.Log_Trace {
 		msg, extra := getParams(param...)
@@ -133,7 +133,7 @@ func (log *GoLogHelper) Trace(param ...interface{}) {
 	}
 }
 
-//Debug
+// Debug
 func (log *GoLogHelper) Debug(param ...interface{}) {
 	if common.GetLogLevel(log.LogLevel) <= common.Log_Debug {
 		msg, extra := getParams(param...)
@@ -141,7 +141,7 @@ func (log *GoLogHelper) Debug(param ...interface{}) {
 	}
 }
 
-//Info
+// Info
 func (log *GoLogHelper) Info(param ...interface{}) {
 	if common.GetLogLevel(log.LogLevel) <= common.Log_Info {
 		msg, extra := getParams(param...)
@@ -149,7 +149,7 @@ func (log *GoLogHelper) Info(param ...interface{}) {
 	}
 }
 
-//Warn
+// Warn
 func (log *GoLogHelper) Warn(param ...interface{}) {
 	if common.GetLogLevel(log.LogLevel) <= common.Log_Warn {
 		msg, extra := getParams(param...)
@@ -157,7 +157,7 @@ func (log *GoLogHelper) Warn(param ...interface{}) {
 	}
 }
 
-//Error
+// Error
 func (log *GoLogHelper) Error(param ...interface{}) {
 	if common.GetLogLevel(log.LogLevel) <= common.Log_Error {
 		msg, extra := getParams(param...)
@@ -165,7 +165,7 @@ func (log *GoLogHelper) Error(param ...interface{}) {
 	}
 }
 
-//内部流水日志msg参数应为结构体
+// 内部流水日志msg参数应为结构体
 func (log *GoLogHelper) Internal_log(param ...interface{}) {
 	msg, extra := getParams(param...)
 	//msg为流水日志结构体
@@ -196,7 +196,7 @@ func (log *GoLogHelper) Internal_log(param ...interface{}) {
 	}
 }
 
-//外部流水日志
+// 外部流水日志
 func (log *GoLogHelper) External_log(param ...interface{}) {
 	msg, extra := getParams(param...)
 	//msg为流水日志结构体
@@ -227,7 +227,7 @@ func (log *GoLogHelper) External_log(param ...interface{}) {
 	}
 }
 
-//打印
+// 打印
 func (log *GoLogHelper) printErrorLog(logModel *service.LogHelper, msg interface{}, extra map[string]interface{}) {
 	var entity interface{}
 	levelstr := common.LevelError
@@ -364,7 +364,7 @@ func (log *GoLogHelper) printInfoLog(logModel *service.LogHelper, msg interface{
 	logs.SetOutput(writer)
 }
 
-//拆分参数(第一个参数默认是msg，后面的参数都是附加参数)
+// 拆分参数(第一个参数默认是msg，后面的参数都是附加参数)
 func getParams(param ...interface{}) (interface{}, map[string]interface{}) {
 	if len(param) > 0 {
 		// msg参数
@@ -403,7 +403,7 @@ func getParams(param ...interface{}) (interface{}, map[string]interface{}) {
 	return nil, nil
 }
 
-//流水日志必填项的校验
+// 流水日志必填项的校验
 func validateRequireItem(fields map[string]interface{}) (isFlag bool) {
 	if len(fields) <= 0 {
 		isFlag = false
@@ -465,7 +465,7 @@ func validateRequireItem(fields map[string]interface{}) (isFlag bool) {
 	return
 }
 
-//获取参数Msg
+// 获取参数Msg
 func getParamMsg(msg interface{}) interface{} {
 	//接收msg参数，调用ConvertIToM函数，如果返回的是nil，说明不可以转换，使用传入的msg
 	msgResult := ConvertIToM(msg)
@@ -475,7 +475,7 @@ func getParamMsg(msg interface{}) interface{} {
 	return msgResult
 }
 
-//将interface{}转为map[string]interface{}
+// 将interface{}转为map[string]interface{}
 func ConvertIToM(msg interface{}) map[string]interface{} {
 	//如果不可以转换返回nil，不处理异常，转换可以成功，返回转换后的内容
 	var mapResult map[string]interface{}
@@ -486,7 +486,7 @@ func ConvertIToM(msg interface{}) map[string]interface{} {
 	return mapResult
 }
 
-//将map[string]interface{}转为结构体
+// 将map[string]interface{}转为结构体
 func ConvertMToS(field interface{}) *model.InfoLogFile {
 	var mapResult *model.InfoLogFile
 	err := mapstructure.Decode(field, &mapResult)
@@ -496,7 +496,7 @@ func ConvertMToS(field interface{}) *model.InfoLogFile {
 	return mapResult
 }
 
-//校验必填内容是否都填
+// 校验必填内容是否都填
 func isValidate(entity *model.InfoLogFile) (isFlag bool) {
 	if entity == nil {
 		return isFlag

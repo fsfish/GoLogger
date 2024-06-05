@@ -1,7 +1,7 @@
 package loghelper
 
 import (
-	common "github.com/yingying0708/GoLogger/LogCommon"
+	common "github.com/fsfish/GoLogger/LogCommon"
 	"os"
 	"runtime"
 	"strings"
