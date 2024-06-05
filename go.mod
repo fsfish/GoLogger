@@ -1,4 +1,4 @@
-module github.com/yingying0708/GoLogger
+module github.com/fsfish/GoLogger
 
 go 1.17
 
