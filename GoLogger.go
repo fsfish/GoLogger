@@ -344,7 +344,6 @@ func (log *GoLogHelper) printDebugLog(logModel *service.LogHelper, msg interface
 }
 
 func (log *GoLogHelper) serviceInfoLog(logModel *service.LogHelper, msg interface{}, extra map[string]interface{}) {
-	var entity interface{}
 	levelstr := common.LevelInfo
 	appname := service.GetAppName(logModel.AppName, levelstr)
 	//控制台打印
@@ -358,9 +357,12 @@ func (log *GoLogHelper) serviceInfoLog(logModel *service.LogHelper, msg interfac
 		logsConsole.WithFields(fields).Println(msg)
 	}
 	//打印到文件
-	writer := getWriter(logModel)
-	writer.Write(string(msg))
-	writer.Write([]byte("\n"))
+	if str, ok := msg.(string); ok {
+	        writer := getWriter(logModel)
+		writer.Write(string(msg))
+		writer.Write([]byte("\n"))
+   	 }
+	
 	
 	logs.SetOutput(writer)
 }
