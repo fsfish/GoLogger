@@ -230,7 +230,7 @@ func (log *GoLogHelper) External_log(param ...interface{}) {
 // 流水日志msg参数应为结构体
 func (log *GoLogHelper) ServiceLog(param ...interface{}) {
 	msg, _ := getParams(param...)
-	log.printInfoLog(log.infoLog, msg, nil)
+	log.serviceInfoLog(log.infoLog, msg, nil)
 }
 
 // 打印
@@ -342,6 +342,29 @@ func (log *GoLogHelper) printDebugLog(logModel *service.LogHelper, msg interface
 	}
 	logs.SetOutput(writer)
 }
+
+func (log *GoLogHelper) serviceInfoLog(logModel *service.LogHelper, msg interface{}, extra map[string]interface{}) {
+	var entity interface{}
+	levelstr := common.LevelInfo
+	appname := service.GetAppName(logModel.AppName, levelstr)
+	//控制台打印
+	if logModel.ConsolePrint {
+		var fields map[string]interface{}
+		if extra != nil {
+			fields = consolehelper.GetPrintLogConsoleCustom(appname, levelstr, extra)
+		} else {
+			fields = consolehelper.GetPrintLogConsole(appname, levelstr)
+		}
+		logsConsole.WithFields(fields).Println(msg)
+	}
+	//打印到文件
+	writer := getWriter(logModel)
+	writer.Write(msg)
+	writer.Write([]byte("\n"))
+	
+	logs.SetOutput(writer)
+}
+
 func (log *GoLogHelper) printInfoLog(logModel *service.LogHelper, msg interface{}, extra map[string]interface{}) {
 	var entity interface{}
 	levelstr := common.LevelInfo
