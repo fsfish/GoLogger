@@ -229,7 +229,7 @@ func (log *GoLogHelper) External_log(param ...interface{}) {
 
 // 流水日志msg参数应为结构体
 func (log *GoLogHelper) ServiceLog(param ...interface{}) {
-	msg, extra := getParams(param...)
+	msg, _ := getParams(param...)
 	log.printInfoLog(log.infoLog, msg, nil)
 }
 
