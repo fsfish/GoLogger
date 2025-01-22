@@ -230,29 +230,7 @@ func (log *GoLogHelper) External_log(param ...interface{}) {
 // 流水日志msg参数应为结构体
 func (log *GoLogHelper) ServiceLog(param ...interface{}) {
 	msg, extra := getParams(param...)
-	//msg为流水日志结构体
-	msgS := ConvertMToS(msg)
-	if msgS == nil {
-		log.printInfoLog(log.infoLog, "流水日志中第一个参数必须为流水日志的结构体，请重新填写", nil)
-	} else {
-		//不验证必填项
-		
-			if msg != nil && extra == nil {
-				extra = ConvertIToM(msg)
-			}
-			if msg != nil && extra != nil {
-				extra = common.MergeMap(ConvertIToM(msg), extra)
-			}
-			if extra != nil {
-				if validateRequireItem(extra) {
-					log.printInfoLog(log.infoLog, extra["msg"], extra)
-				} else {
-					log.printInfoLog(log.infoLog, "流水日志中必填项没有传入完全，请核查必填项", nil)
-				}
-			} else {
-				log.printInfoLog(log.infoLog, msg, nil)
-			}
-	}
+	log.printInfoLog(log.infoLog, msg, nil)
 }
 
 // 打印
