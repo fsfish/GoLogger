@@ -359,7 +359,7 @@ func (log *GoLogHelper) serviceInfoLog(logModel *service.LogHelper, msg interfac
 	}
 	//打印到文件
 	writer := getWriter(logModel)
-	writer.Write(msg)
+	writer.Write(string(msg))
 	writer.Write([]byte("\n"))
 	
 	logs.SetOutput(writer)
