@@ -357,13 +357,11 @@ func (log *GoLogHelper) serviceInfoLog(logModel *service.LogHelper, msg interfac
 		logsConsole.WithFields(fields).Println(msg)
 	}
 	//打印到文件
+	writer := getWriter(logModel)
 	if msgStr, ok := msg.(string); ok {
-	        writer := getWriter(logModel)
-		writer.Write(msgStr)
+		writer.Write([]byte(msgStr))
 		writer.Write([]byte("\n"))
    	 }
-	
-	
 	logs.SetOutput(writer)
 }
 
