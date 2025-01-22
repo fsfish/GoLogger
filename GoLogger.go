@@ -357,9 +357,9 @@ func (log *GoLogHelper) serviceInfoLog(logModel *service.LogHelper, msg interfac
 		logsConsole.WithFields(fields).Println(msg)
 	}
 	//打印到文件
-	if str, ok := msg.(string); ok {
+	if msgStr, ok := msg.(string); ok {
 	        writer := getWriter(logModel)
-		writer.Write(string(msg))
+		writer.Write(msgStr)
 		writer.Write([]byte("\n"))
    	 }
 	
